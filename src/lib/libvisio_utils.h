@@ -16,7 +16,8 @@
 
 #include <memory>
 
-#include <boost/cstdint.hpp>
+//#include <boost/cstdint.hpp>
+//#include <cstdint>
 
 #include "VSDTypes.h"
 
@@ -24,9 +25,10 @@
 #define VSD_ALMOST_ZERO(m) (fabs(m) <= VSD_EPSILON)
 #define VSD_APPROX_EQUAL(x, y) VSD_ALMOST_ZERO((x) - (y))
 
-#include <librevenge/librevenge.h>
-#include <librevenge-stream/librevenge-stream.h>
-#include <unicode/utypes.h>
+#include "librevenge.h"
+#include "RVNGDirectoryStream.h"
+#include "RVNGStream.h"
+#include "RVNGStreamImplementation.h"
 
 #if defined(HAVE_FUNC_ATTRIBUTE_FORMAT)
 #define VSD_ATTRIBUTE_PRINTF(fmt, arg) __attribute__((format(printf, fmt, arg)))
@@ -34,16 +36,44 @@
 #define VSD_ATTRIBUTE_PRINTF(fmt, arg)
 #endif
 
-// do nothing with debug messages in a release compile
-#ifdef DEBUG
-#define VSD_DEBUG_MSG(M) libvisio::debugPrint M
-#define VSD_DEBUG(M) M
-#else
-#define VSD_DEBUG_MSG(M)
-#define VSD_DEBUG(M)
-#endif
-
 #define VSD_NUM_ELEMENTS(array) (sizeof(array)/sizeof((array)[0]))
+
+
+typedef int32_t UChar32;
+
+// The maximum number of UTF-8 code units (bytes) per Unicode code point (U+0000..U+10ffff).
+#define U8_MAX_LENGTH 4
+
+/**
+* Append a code point to a string, overwriting 1 to 4 bytes.
+* The offset points to the current end of the string contents
+* and is advanced (post-increment).
+* "Unsafe" macro, assumes a valid code point and sufficient space in the string.
+* Otherwise, the result is undefined.
+*
+* @param s const uint8_t * string buffer
+* @param i string offset
+* @param c code point to append
+*/
+#define U8_APPEND_UNSAFE(s, i, c) { \
+    uint32_t __uc=(c); \
+    if(__uc<=0x7f) { \
+        (s)[(i)++]=(uint8_t)__uc; \
+    } else { \
+        if(__uc<=0x7ff) { \
+            (s)[(i)++]=(uint8_t)((__uc>>6)|0xc0); \
+        } else { \
+            if(__uc<=0xffff) { \
+                (s)[(i)++]=(uint8_t)((__uc>>12)|0xe0); \
+            } else { \
+                (s)[(i)++]=(uint8_t)((__uc>>18)|0xf0); \
+                (s)[(i)++]=(uint8_t)(((__uc>>12)&0x3f)|0x80); \
+            } \
+            (s)[(i)++]=(uint8_t)(((__uc>>6)&0x3f)|0x80); \
+        } \
+        (s)[(i)++]=(uint8_t)((__uc&0x3f)|0x80); \
+    } \
+}
 
 namespace libvisio
 {
@@ -69,26 +99,15 @@ std::unique_ptr<T> clone(const std::unique_ptr<T> &other)
 
 uint8_t readU8(librevenge::RVNGInputStream *input);
 uint16_t readU16(librevenge::RVNGInputStream *input);
-int16_t readS16(librevenge::RVNGInputStream *input);
 uint32_t readU32(librevenge::RVNGInputStream *input);
 int32_t readS32(librevenge::RVNGInputStream *input);
 uint64_t readU64(librevenge::RVNGInputStream *input);
-
-double readDouble(librevenge::RVNGInputStream *input);
-
-const librevenge::RVNGString getColourString(const Colour &c);
 
 unsigned long getRemainingLength(librevenge::RVNGInputStream *input);
 
 void appendUCS4(librevenge::RVNGString &text, UChar32 ucs4Character);
 
-void debugPrint(const char *format, ...) VSD_ATTRIBUTE_PRINTF(1, 2);
-
 class EndOfStreamException
-{
-};
-
-class XmlParserException
 {
 };
 

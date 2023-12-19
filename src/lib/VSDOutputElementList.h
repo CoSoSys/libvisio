@@ -14,7 +14,7 @@
 #include <memory>
 #include <list>
 #include <vector>
-#include <librevenge/librevenge.h>
+#include "librevenge.h"
 
 namespace libvisio
 {
@@ -47,7 +47,6 @@ public:
   void addInsertLineBreak();
   void addInsertTab();
   void addStartLayer(const librevenge::RVNGPropertyList &propList);
-  void addEndLayer();
   bool empty() const
   {
     return m_elements.empty();

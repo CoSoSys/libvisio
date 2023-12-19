@@ -14,7 +14,6 @@
 #include <memory>
 #include <vector>
 #include "VSDStyles.h"
-#include "VSDGeometryList.h"
 #include "VSDFieldList.h"
 #include "VSDTypes.h"
 #include "VSDParagraphList.h"
@@ -33,18 +32,12 @@ public:
   VSDShape &operator=(const VSDShape &shape);
   void clear();
 
-  std::map<unsigned, VSDGeometryList> m_geometries;
   VSDShapeList m_shapeList;
   VSDFieldList m_fields;
   std::unique_ptr<ForeignData> m_foreign;
   unsigned m_parent, m_masterPage, m_masterShape, m_shapeId;
   unsigned m_lineStyleId, m_fillStyleId, m_textStyleId;
-  VSDOptionalLineStyle m_lineStyle;
-  VSDOptionalFillStyle m_fillStyle;
-  VSDOptionalTextBlockStyle m_textBlockStyle;
-  VSDOptionalCharStyle m_charStyle;
   VSDCharacterList m_charList;
-  VSDOptionalParaStyle m_paraStyle;
   VSDParagraphList m_paraList;
   std::map<unsigned, VSDTabSet> m_tabSets;
   librevenge::RVNGBinaryData m_text;
@@ -63,11 +56,10 @@ class VSDStencil
 {
 public:
   VSDStencil();
-  VSDStencil(const VSDStencil &stencil) = default;
+  VSDStencil(const VSDStencil &stencil);
   ~VSDStencil();
-  VSDStencil &operator=(const VSDStencil &stencil) = default;
+  VSDStencil &operator=(const VSDStencil &stencil);
   void addStencilShape(unsigned id, const VSDShape &shape);
-  void setFirstShape(unsigned id);
   const VSDShape *getStencilShape(unsigned id) const;
   std::map<unsigned, VSDShape> m_shapes;
   double m_shadowOffsetX;
@@ -79,13 +71,13 @@ class VSDStencils
 {
 public:
   VSDStencils();
-  ~VSDStencils();
+  // ~VSDStencils();
   void addStencil(unsigned idx, const VSDStencil &stencil);
   const VSDStencil *getStencil(unsigned idx) const;
   const VSDShape *getStencilShape(unsigned pageId, unsigned shapeId) const;
   unsigned count() const
   {
-    return m_stencils.size();
+    return (unsigned) m_stencils.size();
   }
 private:
   std::map<unsigned, VSDStencil> m_stencils;

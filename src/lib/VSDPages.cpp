@@ -69,11 +69,6 @@ void libvisio::VSDPages::addBackgroundPage(const libvisio::VSDPage &page)
   m_backgroundPages[page.m_currentPageID] = page;
 }
 
-void libvisio::VSDPages::setMetaData(const librevenge::RVNGPropertyList &metaData)
-{
-  m_metaData = metaData;
-}
-
 void libvisio::VSDPages::draw(librevenge::RVNGDrawingInterface *painter)
 {
   if (!painter)
@@ -87,10 +82,14 @@ void libvisio::VSDPages::draw(librevenge::RVNGDrawingInterface *painter)
   for (auto &page : m_pages)
   {
     librevenge::RVNGPropertyList pageProps;
-    pageProps.insert("svg:width", page.m_pageWidth);
-    pageProps.insert("svg:height", page.m_pageHeight);
-    if (page.m_pageName.len())
-      pageProps.insert("draw:name", page.m_pageName);
+    // pageProps.insert("svg:width", page.m_pageWidth);
+    // pageProps.insert("svg:height", page.m_pageHeight);
+	if (page.m_pageName.len()) {
+		painter->insertLineBreak();
+		painter->insertText(page.m_pageName);
+		painter->insertLineBreak();
+	}
+
     painter->startPage(pageProps);
     _drawWithBackground(painter, page);
     painter->endPage();
@@ -100,10 +99,14 @@ void libvisio::VSDPages::draw(librevenge::RVNGDrawingInterface *painter)
        iter != m_backgroundPages.end(); ++iter)
   {
     librevenge::RVNGPropertyList pageProps;
-    pageProps.insert("svg:width", iter->second.m_pageWidth);
-    pageProps.insert("svg:height", iter->second.m_pageHeight);
-    if (iter->second.m_pageName.len())
-      pageProps.insert("draw:name", iter->second.m_pageName);
+    // pageProps.insert("svg:width", iter->second.m_pageWidth);
+    // pageProps.insert("svg:height", iter->second.m_pageHeight);
+	if (iter->second.m_pageName.len()) {
+		painter->insertLineBreak();
+		painter->insertText(iter->second.m_pageName);
+		painter->insertLineBreak();
+	}
+
     painter->startPage(pageProps);
     _drawWithBackground(painter, iter->second);
     painter->endPage();

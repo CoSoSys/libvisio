@@ -13,7 +13,9 @@
 
 #include <stddef.h>
 #include <vector>
-#include <librevenge-stream/librevenge-stream.h>
+#include "RVNGDirectoryStream.h"
+#include "RVNGStream.h"
+#include "RVNGStreamImplementation.h"
 
 class VSDInternalStream : public librevenge::RVNGInputStream
 {
@@ -51,8 +53,8 @@ public:
   bool isEnd() override;
   unsigned long getSize() const
   {
-    return m_buffer.size();
-  };
+    return (unsigned long) m_buffer.size();
+  }
 
 private:
   volatile long m_offset;

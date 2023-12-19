@@ -12,7 +12,7 @@
 
 #include <vector>
 #include <map>
-#include <librevenge/librevenge.h>
+#include "librevenge.h"
 
 #define ASSIGN_OPTIONAL(t, u) if(!!t) u = t.get()
 #define MINUS_ONE (unsigned)-1
@@ -35,8 +35,11 @@ struct XForm
   XForm() : pinX(0.0), pinY(0.0), height(0.0), width(0.0),
     pinLocX(0.0), pinLocY(0.0), angle(0.0),
     flipX(false), flipY(false), x(0.0), y(0.0) {}
-  XForm(const XForm &xform) = default;
-  XForm &operator=(const XForm &xform) = default;
+  XForm(const XForm &xform) : pinX(xform.pinX), pinY(xform.pinY), height(xform.height),
+    width(xform.width), pinLocX(xform.pinLocX), pinLocY(xform.pinLocY), angle(xform.angle),
+    flipX(xform.flipX), flipY(xform.flipY), x(xform.x), y(xform.y) {}
+  XForm &operator=(const XForm&) = default;
+
 };
 
 struct XForm1D
@@ -107,8 +110,15 @@ struct NURBSData
       knots(),
       weights(),
       points() {}
-  NURBSData(const NURBSData &data) = default;
-  NURBSData &operator=(const NURBSData &data) = default;
+  NURBSData(const NURBSData &data)
+    : lastKnot(data.lastKnot),
+      degree(data.degree),
+      xType(data.xType),
+      yType(data.yType),
+      knots(data.knots),
+      weights(data.weights),
+      points(data.points) {}
+  NURBSData &operator=(const NURBSData&) = default;
 };
 
 struct PolylineData
@@ -174,7 +184,7 @@ public:
     : m_data(data),
       m_format(format) {}
   VSDName() : m_data(), m_format(VSD_TEXT_ANSI) {}
-  VSDName(const VSDName &name) = default;
+  VSDName(const VSDName &name) : m_data(name.m_data), m_format(name.m_format) {}
   VSDName &operator=(const VSDName &name) = default;
   bool empty() const
   {
@@ -204,8 +214,7 @@ struct VSDMisc
 {
   bool m_hideText;
   VSDMisc() : m_hideText(false) {}
-  VSDMisc(const VSDMisc &misc) = default;
-  VSDMisc &operator=(const VSDMisc &misc) = default;
+  // VSDMisc(const VSDMisc &misc) : m_hideText(misc.m_hideText) {}
 };
 
 struct VSDTabStop
@@ -217,6 +226,7 @@ struct VSDTabStop
   VSDTabStop(const VSDTabStop &tabStop) :
     m_position(tabStop.m_position), m_alignment(tabStop.m_alignment),
     m_leader(tabStop.m_leader) {}
+  VSDTabStop &operator=(const VSDTabStop &tabStop) = default;
 };
 
 struct VSDTabSet
@@ -226,6 +236,7 @@ struct VSDTabSet
   VSDTabSet() : m_numChars(0), m_tabStops() {}
   VSDTabSet(const VSDTabSet &tabSet) :
     m_numChars(tabSet.m_numChars), m_tabStops(tabSet.m_tabStops) {}
+  VSDTabSet &operator=(const VSDTabSet &tabSet) = default;
 };
 
 struct VSDBullet
@@ -239,8 +250,11 @@ struct VSDBullet
       m_bulletFont(),
       m_bulletFontSize(0.0),
       m_textPosAfterBullet(0.0) {}
-  VSDBullet(const VSDBullet &bullet) = default;
-  VSDBullet &operator=(const VSDBullet &bullet) = default;
+  VSDBullet(const VSDBullet &bullet) :
+    m_bulletStr(bullet.m_bulletStr),
+    m_bulletFont(bullet.m_bulletFont),
+    m_bulletFontSize(bullet.m_bulletFontSize),
+    m_textPosAfterBullet(bullet.m_textPosAfterBullet) {}
   inline bool operator==(const VSDBullet &bullet) const
   {
     return ((m_bulletStr == bullet.m_bulletStr) &&

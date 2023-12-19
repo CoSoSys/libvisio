@@ -17,7 +17,6 @@ uint8_t libvisio::readU8(librevenge::RVNGInputStream *input)
 {
   if (!input || input->isEnd())
   {
-    VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
     throw EndOfStreamException();
   }
   unsigned long numBytesRead;
@@ -25,7 +24,6 @@ uint8_t libvisio::readU8(librevenge::RVNGInputStream *input)
 
   if (p && numBytesRead == sizeof(uint8_t))
     return *(uint8_t const *)(p);
-  VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
   throw EndOfStreamException();
 }
 
@@ -33,28 +31,20 @@ uint16_t libvisio::readU16(librevenge::RVNGInputStream *input)
 {
   if (!input || input->isEnd())
   {
-    VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
     throw EndOfStreamException();
   }
   unsigned long numBytesRead;
   uint8_t const *p = input->read(sizeof(uint16_t), numBytesRead);
 
   if (p && numBytesRead == sizeof(uint16_t))
-    return (uint16_t)p[0]|((uint16_t)p[1]<<8);
-  VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
+    return (uint16_t)(p[0]|((uint16_t)p[1]<<8));
   throw EndOfStreamException();
-}
-
-int16_t libvisio::readS16(librevenge::RVNGInputStream *input)
-{
-  return (int16_t)readU16(input);
 }
 
 uint32_t libvisio::readU32(librevenge::RVNGInputStream *input)
 {
   if (!input || input->isEnd())
   {
-    VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
     throw EndOfStreamException();
   }
   unsigned long numBytesRead;
@@ -62,7 +52,6 @@ uint32_t libvisio::readU32(librevenge::RVNGInputStream *input)
 
   if (p && numBytesRead == sizeof(uint32_t))
     return (uint32_t)p[0]|((uint32_t)p[1]<<8)|((uint32_t)p[2]<<16)|((uint32_t)p[3]<<24);
-  VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
   throw EndOfStreamException();
 }
 
@@ -75,7 +64,6 @@ uint64_t libvisio::readU64(librevenge::RVNGInputStream *input)
 {
   if (!input || input->isEnd())
   {
-    VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
     throw EndOfStreamException();
   }
   unsigned long numBytesRead;
@@ -83,28 +71,7 @@ uint64_t libvisio::readU64(librevenge::RVNGInputStream *input)
 
   if (p && numBytesRead == sizeof(uint64_t))
     return (uint64_t)p[0]|((uint64_t)p[1]<<8)|((uint64_t)p[2]<<16)|((uint64_t)p[3]<<24)|((uint64_t)p[4]<<32)|((uint64_t)p[5]<<40)|((uint64_t)p[6]<<48)|((uint64_t)p[7]<<56);
-  VSD_DEBUG_MSG(("Throwing EndOfStreamException\n"));
   throw EndOfStreamException();
-}
-
-double libvisio::readDouble(librevenge::RVNGInputStream *input)
-{
-  union
-  {
-    uint64_t u;
-    double d;
-  } tmpUnion;
-
-  tmpUnion.u = readU64(input);
-
-  return tmpUnion.d;
-}
-
-const librevenge::RVNGString libvisio::getColourString(const Colour &c)
-{
-  librevenge::RVNGString sColour;
-  sColour.sprintf("#%.2x%.2x%.2x", c.r, c.g, c.b);
-  return sColour;
 }
 
 unsigned long libvisio::getRemainingLength(librevenge::RVNGInputStream *const input)
@@ -141,14 +108,6 @@ void libvisio::appendUCS4(librevenge::RVNGString &text, UChar32 ucs4Character)
   outbuf[i] = 0;
 
   text.append((char *)outbuf);
-}
-
-void libvisio::debugPrint(const char *format, ...)
-{
-  va_list args;
-  va_start(args, format);
-  std::vfprintf(stderr, format, args);
-  va_end(args);
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

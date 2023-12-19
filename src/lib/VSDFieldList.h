@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 #include <map>
-#include <librevenge/librevenge.h>
+#include "librevenge.h"
 #include "VSDDocumentStructure.h"
 #include "VSDTypes.h"
 
@@ -32,7 +32,6 @@ public:
   virtual librevenge::RVNGString getString(const std::map<unsigned, librevenge::RVNGString> &) = 0;
   virtual void setNameId(int) = 0;
   virtual void setFormat(unsigned short) = 0;
-  virtual void setCellType(unsigned short) = 0;
   virtual void setValue(double) = 0;
 };
 
@@ -50,7 +49,6 @@ public:
   librevenge::RVNGString getString(const std::map<unsigned, librevenge::RVNGString> &strVec) override;
   void setNameId(int nameId) override;
   void setFormat(unsigned short) override {}
-  void setCellType(unsigned short) override {}
   void setValue(double) override {}
 private:
   unsigned m_id, m_level;
@@ -60,11 +58,10 @@ private:
 class VSDNumericField : public VSDFieldListElement
 {
 public:
-  VSDNumericField(unsigned id, unsigned level, unsigned short format, unsigned short cellType, double number, int formatStringId)
+  VSDNumericField(unsigned id, unsigned level, unsigned short format, double number, int formatStringId)
     : m_id(id),
       m_level(level),
       m_format(format),
-      m_cell_type(cellType),
       m_number(number),
       m_formatStringId(formatStringId) {}
   ~VSDNumericField() override {}
@@ -73,13 +70,11 @@ public:
   librevenge::RVNGString getString(const std::map<unsigned, librevenge::RVNGString> &) override;
   void setNameId(int) override {}
   void setFormat(unsigned short format) override;
-  void setCellType(unsigned short cellType) override;
   void setValue(double number) override;
 private:
   librevenge::RVNGString datetimeToString(const char *format, double datetime);
   unsigned m_id, m_level;
   unsigned short m_format;
-  unsigned short m_cell_type;
   double m_number;
   int m_formatStringId;
 };
@@ -91,10 +86,6 @@ public:
   VSDFieldList(const VSDFieldList &fieldList);
   ~VSDFieldList();
   VSDFieldList &operator=(const VSDFieldList &fieldList);
-  void setElementsOrder(const std::vector<unsigned> &m_elementsOrder);
-  void addFieldList(unsigned id, unsigned level);
-  void addTextField(unsigned id, unsigned level, int nameId, int formatStringId);
-  void addNumericField(unsigned id, unsigned level, unsigned short format, unsigned short cellType, double number, int formatStringId);
   void addClonedField(unsigned id);
   void handle(VSDCollector *collector) const;
   void clear();

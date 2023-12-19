@@ -596,11 +596,6 @@ void libvisio::VSDOutputElementList::addStartLayer(const librevenge::RVNGPropert
   m_elements.push_back(make_unique<VSDStartLayerOutputElement>(propList));
 }
 
-void libvisio::VSDOutputElementList::addEndLayer()
-{
-  m_elements.push_back(make_unique<VSDEndLayerOutputElement>());
-}
-
 void libvisio::VSDOutputElementList::addOpenListElement(const librevenge::RVNGPropertyList &propList)
 {
   m_elements.push_back(make_unique<VSDOpenListElementOutputElement>(propList));

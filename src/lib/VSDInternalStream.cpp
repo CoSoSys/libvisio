@@ -9,7 +9,7 @@
 
 #include "VSDInternalStream.h"
 
-#include <string.h>
+#include <cstring>
 
 VSDInternalStream::VSDInternalStream(librevenge::RVNGInputStream *input, unsigned long size, bool compressed) :
   librevenge::RVNGInputStream(),
@@ -84,12 +84,12 @@ const unsigned char *VSDInternalStream::read(unsigned long numBytes, unsigned lo
 
   int numBytesToRead;
 
-  if (numBytes < m_buffer.size() - m_offset)
-    numBytesToRead = numBytes;
+  if (numBytes < m_buffer.size() - (size_t) m_offset)
+    numBytesToRead = (int) numBytes;
   else
-    numBytesToRead = m_buffer.size() - m_offset;
+    numBytesToRead = (int) (m_buffer.size() - (size_t) m_offset);
 
-  numBytesRead = numBytesToRead; // about as paranoid as we can be..
+  numBytesRead = (unsigned long) numBytesToRead; // about as paranoid as we can be..
 
   if (numBytesToRead == 0)
     return nullptr;
@@ -97,7 +97,7 @@ const unsigned char *VSDInternalStream::read(unsigned long numBytes, unsigned lo
   long oldOffset = m_offset;
   m_offset += numBytesToRead;
 
-  return &m_buffer[oldOffset];
+  return &m_buffer[(size_t) oldOffset];
 }
 
 int VSDInternalStream::seek(long offset, librevenge::RVNG_SEEK_TYPE seekType)
@@ -116,7 +116,7 @@ int VSDInternalStream::seek(long offset, librevenge::RVNG_SEEK_TYPE seekType)
   }
   if ((long)m_offset > (long)m_buffer.size())
   {
-    m_offset = m_buffer.size();
+    m_offset = (long) m_buffer.size();
     return 1;
   }
 

@@ -52,11 +52,6 @@ void libvisio::VSDShapeList::addShapeId(unsigned shapeId)
   m_elementsOrder.push_back(shapeId);
 }
 
-void libvisio::VSDShapeList::setElementsOrder(const std::vector<unsigned> &elementsOrder)
-{
-  m_elementsOrder = elementsOrder;
-}
-
 const std::vector<unsigned> &libvisio::VSDShapeList::getShapesOrder()
 {
   if (empty())

@@ -126,57 +126,6 @@
 #define VSD_FONTFACE 0xd7
 #define VSD_FONTFACES 0xd8
 
-// Unit conversions:
-#define CELL_TYPE_Number             32
-#define CELL_TYPE_Percent            33
-#define CELL_TYPE_Acre               36
-#define CELL_TYPE_Hectare            37
-#define CELL_TYPE_Date               40
-#define CELL_TYPE_DurationUnits      42
-#define CELL_TYPE_ElapsedWeek        43
-#define CELL_TYPE_ElapsedDay         44
-#define CELL_TYPE_ElapsedHour        45
-#define CELL_TYPE_ElapsedMin         46
-#define CELL_TYPE_ElapsedSec         47
-#define CELL_TYPE_TypeUnits          48
-#define CELL_TYPE_PicasAndPoints     49
-#define CELL_TYPE_Points             50
-#define CELL_TYPE_Picas              51
-#define CELL_TYPE_CicerosAndDidots   52
-#define CELL_TYPE_Didots             53
-#define CELL_TYPE_Ciceros            54
-#define CELL_TYPE_PageUnits          63
-#define CELL_TYPE_DrawingUnits       64
-#define CELL_TYPE_Inches             65
-#define CELL_TYPE_Feet               66
-#define CELL_TYPE_FeetAndInches      67
-#define CELL_TYPE_Centimeters        69
-#define CELL_TYPE_Miles              68
-#define CELL_TYPE_Millimeters        70
-#define CELL_TYPE_Meters             71
-#define CELL_TYPE_Kilometers         72
-#define CELL_TYPE_InchFractions      73
-#define CELL_TYPE_MileFractions      74
-#define CELL_TYPE_Yards              75
-#define CELL_TYPE_NauticalMiles      76
-#define CELL_TYPE_AngleUnits         80
-#define CELL_TYPE_Degrees            81
-#define CELL_TYPE_DegreeMinuteSecond 82
-#define CELL_TYPE_Radians            83
-#define CELL_TYPE_Minutes            84
-#define CELL_TYPE_Sec                85
-#define CELL_TYPE_GUID               95
-#define CELL_TYPE_Currency          111
-#define CELL_TYPE_NURBS             138
-#define CELL_TYPE_Polyline          139
-#define CELL_TYPE_Point             225
-#define CELL_TYPE_String            231
-#define CELL_TYPE_StringWithoutUnit 232
-#define CELL_TYPE_Multidimensional  233 // like Acre, square meters, sq. inches, hectare, sq. yards
-#define CELL_TYPE_Color             251
-#define CELL_TYPE_NoCast            252 // No unit conversion
-#define CELL_TYPE_Invalid           255
-
 // Field formats
 
 #define VSD_FIELD_FORMAT_NumGenNoUnits  0
@@ -203,8 +152,8 @@
 #define VSD_FIELD_FORMAT_DateLong  21
 #define VSD_FIELD_FORMAT_DateMDYY  22
 #define VSD_FIELD_FORMAT_DateMMDDYY  23
-#define VSD_FIELD_FORMAT_DateMMMDYYYY  24
-#define VSD_FIELD_FORMAT_DateMMMMDYYYY  25
+#define VSD_FIELD_FORMAT_DateMmmDYYYY  24
+#define VSD_FIELD_FORMAT_DateMmmmDYYYY  25
 #define VSD_FIELD_FORMAT_DateDMYY  26
 #define VSD_FIELD_FORMAT_DateDDMMYY  27
 #define VSD_FIELD_FORMAT_DateDMMMYYYY  28

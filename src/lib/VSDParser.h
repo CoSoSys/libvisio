@@ -10,20 +10,18 @@
 #ifndef __VSDPARSER_H__
 #define __VSDPARSER_H__
 
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 #include <vector>
 #include <stack>
 #include <map>
 #include <set>
-#include <librevenge/librevenge.h>
+#include "librevenge.h"
 #include "VSDTypes.h"
-#include "VSDGeometryList.h"
 #include "VSDFieldList.h"
 #include "VSDCharacterList.h"
 #include "VSDParagraphList.h"
 #include "VSDShapeList.h"
-#include "VSDLayerList.h"
 #include "VSDStencils.h"
 
 namespace libvisio
@@ -35,8 +33,9 @@ struct Pointer
 {
   Pointer()
     : Type(0), Offset(0), Length(0), Format(0), ListSize(0) {}
-  Pointer(const Pointer &ptr) = default;
-  Pointer &operator=(const Pointer &ptr) = default;
+  Pointer(const Pointer &ptr)
+    : Type(ptr.Type), Offset(ptr.Offset), Length(ptr.Length), Format(ptr.Format), ListSize(ptr.ListSize) {}
+  Pointer &operator=(const Pointer&) = default;
   unsigned Type;
   unsigned Offset;
   unsigned Length;
@@ -53,76 +52,21 @@ public:
   bool extractStencils();
 
 protected:
-  // reader functions
-  void readEllipticalArcTo(librevenge::RVNGInputStream *input);
-  void readForeignData(librevenge::RVNGInputStream *input);
-  void readEllipse(librevenge::RVNGInputStream *input);
-  virtual void readLine(librevenge::RVNGInputStream *input);
-  virtual void readFillAndShadow(librevenge::RVNGInputStream *input);
-  virtual void readGeomList(librevenge::RVNGInputStream *input);
-  void readGeometry(librevenge::RVNGInputStream *input);
-  void readMoveTo(librevenge::RVNGInputStream *input);
-  void readLineTo(librevenge::RVNGInputStream *input);
-  void readArcTo(librevenge::RVNGInputStream *input);
-  void readNURBSTo(librevenge::RVNGInputStream *input);
-  void readPolylineTo(librevenge::RVNGInputStream *input);
-  void readInfiniteLine(librevenge::RVNGInputStream *input);
-  void readShapeData(librevenge::RVNGInputStream *input);
-  void readXFormData(librevenge::RVNGInputStream *input);
-  virtual void readXForm1D(librevenge::RVNGInputStream *input);
-  void readTxtXForm(librevenge::RVNGInputStream *input);
-  void readShapeId(librevenge::RVNGInputStream *input);
-  virtual void readShapeList(librevenge::RVNGInputStream *input);
-  void readForeignDataType(librevenge::RVNGInputStream *input);
+
+	void readNameIDX(librevenge::RVNGInputStream *input);
   void readPageProps(librevenge::RVNGInputStream *input);
+
+  // reader functions
+  void readShapeId(librevenge::RVNGInputStream *input);
   virtual void readShape(librevenge::RVNGInputStream *input);
-  void readColours(librevenge::RVNGInputStream *input);
-  void readFont(librevenge::RVNGInputStream *input);
-  void readFontIX(librevenge::RVNGInputStream *input);
-  virtual void readCharList(librevenge::RVNGInputStream *input);
-  virtual void readParaList(librevenge::RVNGInputStream *input);
-  virtual void readPropList(librevenge::RVNGInputStream *input);
   virtual void readPage(librevenge::RVNGInputStream *input);
   virtual void readText(librevenge::RVNGInputStream *input);
-  virtual void readCharIX(librevenge::RVNGInputStream *input);
-  virtual void readParaIX(librevenge::RVNGInputStream *input);
-  virtual void readTextBlock(librevenge::RVNGInputStream *input);
-  virtual void readTabsDataList(librevenge::RVNGInputStream *input);
-  virtual void readTabsData(librevenge::RVNGInputStream *input);
-
   void readNameList(librevenge::RVNGInputStream *input);
-  virtual void readName(librevenge::RVNGInputStream *input);
-
   virtual void readNameList2(librevenge::RVNGInputStream *input);
-  virtual void readName2(librevenge::RVNGInputStream *input);
-
-  virtual void readFieldList(librevenge::RVNGInputStream *input);
-  virtual void readTextField(librevenge::RVNGInputStream *input);
-
-  virtual void readStyleSheet(librevenge::RVNGInputStream *input);
   void readPageSheet(librevenge::RVNGInputStream *input);
-
-  void readSplineStart(librevenge::RVNGInputStream *input);
-  void readSplineKnot(librevenge::RVNGInputStream *input);
-
-  void readStencilShape(librevenge::RVNGInputStream *input);
-
-  void readOLEList(librevenge::RVNGInputStream *input);
-  void readOLEData(librevenge::RVNGInputStream *input);
-
-  virtual void readNameIDX(librevenge::RVNGInputStream *input);
-  virtual void readNameIDX123(librevenge::RVNGInputStream *input);
-
-  virtual void readMisc(librevenge::RVNGInputStream *input);
-
-  virtual void readLayerList(librevenge::RVNGInputStream *input);
-  virtual void readLayer(librevenge::RVNGInputStream *input);
-  virtual void readLayerMem(librevenge::RVNGInputStream *input);
 
   // parser of one pass
   bool parseDocument(librevenge::RVNGInputStream *input, unsigned shift);
-
-  void parseMetaData();
 
   // Stream handlers
   void handleStreams(librevenge::RVNGInputStream *input, unsigned ptrType, unsigned shift, unsigned level, std::set<unsigned> &visited);
@@ -135,7 +79,6 @@ protected:
   virtual void readPointerInfo(librevenge::RVNGInputStream *input, unsigned ptrType, unsigned shift, unsigned &listSize, int &pointerCount);
   virtual bool getChunkHeader(librevenge::RVNGInputStream *input);
   void _handleLevelChange(unsigned level);
-  Colour _colourFromIndex(unsigned idx);
   void _flushShape();
   void _nameFromId(VSDName &name, unsigned id, unsigned level);
 
@@ -169,7 +112,6 @@ protected:
   double m_shadowOffsetX;
   double m_shadowOffsetY;
 
-  VSDGeometryList *m_currentGeometryList;
   unsigned m_currentGeomListCount;
 
   std::map<unsigned, VSDName> m_fonts;
